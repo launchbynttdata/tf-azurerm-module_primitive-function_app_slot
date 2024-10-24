@@ -5,7 +5,7 @@ resource "azurerm_windows_function_app_slot" "main" {
   function_app_id = var.function_app_id
   dynamic "site_config" {
     iterator = site_config
-    for_each = can(var.site_config[*]) ? var.site_config[*] : []
+    for_each = try(var.site_config[*], [])
     content {
       always_on             = lookup(site_config.value, "always_on", null)
       api_definition_url    = lookup(site_config.value, "api_definition_url", null)
@@ -14,7 +14,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       app_scale_limit       = lookup(site_config.value, "app_scale_limit", null)
       dynamic "app_service_logs" {
         iterator = app_service_logs
-        for_each = can(site_config.value["app_service_logs"][*]) ? site_config.value["app_service_logs"][*] : []
+        for_each = try(site_config.value["app_service_logs"][*], [])
         content {
           disk_quota_mb         = lookup(app_service_logs.value, "disk_quota_mb", null)
           retention_period_days = lookup(app_service_logs.value, "retention_period_days", null)
@@ -24,8 +24,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       application_insights_key               = lookup(site_config.value, "application_insights_key", null)
       dynamic "application_stack" {
         iterator = application_stack
-        # for_each = site_config.value["application_stack"][*]
-        for_each = can(site_config.value["application_stack"][*]) ? site_config.value["application_stack"][*] : []
+        for_each = try(site_config.value["application_stack"][*], [])
         content {
           dotnet_version = lookup(application_stack.value, "dotnet_version", null)
           node_version   = lookup(application_stack.value, "node_version", null)
@@ -52,7 +51,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       # container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", null)
       dynamic "cors" {
         iterator = cors
-        for_each = can(site_config.value["cors"][*]) ? site_config.value["cors"][*] : []
+        for_each = try(site_config.value["cors"][*], [])
         content {
           allowed_origins     = lookup(cors.value, "allowed_origins", null)
           support_credentials = lookup(cors.value, "support_credentials", null)
@@ -66,7 +65,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       http2_enabled                     = lookup(site_config.value, "http2_enabled", null)
       dynamic "ip_restriction" {
         iterator = ip_restriction
-        for_each = can(site_config.value["ip_restriction"][*]) ? site_config.value["ip_restriction"][*] : []
+        for_each = try(site_config.value["ip_restriction"][*], [])
         content {
           action                    = lookup(ip_restriction.value, "action", null)
           ip_address                = lookup(ip_restriction.value, "ip_address", null)
@@ -76,7 +75,7 @@ resource "azurerm_windows_function_app_slot" "main" {
           virtual_network_subnet_id = lookup(ip_restriction.value, "virtual_network_subnet_id", null)
           dynamic "headers" {
             iterator = headers
-            for_each = can(ip_restriction.value["headers"][*]) ? ip_restriction.value["headers"][*] : []
+            for_each = try(ip_restriction.value["headers"][*], [])
             content {
               x_azure_fdid      = lookup(headers.value, "x_azure_fdid", null)
               x_fd_health_probe = lookup(headers.value, "x_fd_health_probe", null)
@@ -97,7 +96,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       runtime_scale_monitoring_enabled = lookup(site_config.value, "runtime_scale_monitoring_enabled", null)
       dynamic "scm_ip_restriction" {
         iterator = scm_ip_restriction
-        for_each = can(site_config.value["scm_ip_restriction"][*]) ? site_config.value["scm_ip_restriction"][*] : []
+        for_each = try(site_config.value["scm_ip_restriction"][*], [])
         content {
           action                    = lookup(scm_ip_restriction.value, "action", null)
           ip_address                = lookup(scm_ip_restriction.value, "ip_address", null)
@@ -107,7 +106,7 @@ resource "azurerm_windows_function_app_slot" "main" {
           virtual_network_subnet_id = lookup(scm_ip_restriction.value, "virtual_network_subnet_id", null)
           dynamic "headers" {
             iterator = headers
-            for_each = can(scm_ip_restriction.value["headers"][*]) ? scm_ip_restriction.value["headers"][*] : []
+            for_each = try(scm_ip_restriction.value["headers"][*], [])
             content {
               x_azure_fdid      = lookup(headers.value, "x_azure_fdid", null)
               x_fd_health_probe = lookup(headers.value, "x_fd_health_probe", null)
@@ -132,12 +131,12 @@ resource "azurerm_windows_function_app_slot" "main" {
   app_settings = var.app_settings
   dynamic "auth_settings" {
     iterator = auth_settings
-    for_each = can(var.auth_settings[*]) ? var.auth_settings[*] : []
+    for_each = try(var.auth_settings[*], [])
     content {
       enabled = lookup(auth_settings.value, "enabled", null)
       dynamic "active_directory" {
         iterator = active_directory
-        for_each = can(auth_settings.value["active_directory"]) ? auth_settings.value["active_directory"][*] : []
+        for_each = try(auth_settings.value["active_directory"][*], [])
         content {
           client_id                  = active_directory.value.client_id
           allowed_audiences          = lookup(active_directory.value, "allowed_audiences", null)
@@ -150,7 +149,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       default_provider               = lookup(auth_settings.value, "default_provider", null)
       dynamic "facebook" {
         iterator = facebook
-        for_each = can(auth_settings.value["facebook"]) ? auth_settings.value["facebook"][*] : []
+        for_each = try(auth_settings.value["facebook"][*], [])
         content {
           app_id                  = facebook.value.app_id
           app_secret              = lookup(facebook.value, "app_secret", null)
@@ -160,7 +159,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "github" {
         iterator = github
-        for_each = can(auth_settings.value["github"]) ? auth_settings.value["github"][*] : []
+        for_each = try(auth_settings.value["github"][*], [])
         content {
           client_id                  = github.value.client_id
           client_secret              = lookup(github.value, "client_secret", null)
@@ -170,7 +169,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "google" {
         iterator = google
-        for_each = can(auth_settings.value["google"]) ? auth_settings.value["google"][*] : []
+        for_each = try(auth_settings.value["google"][*], [])
         content {
           client_id                  = google.value.client_id
           client_secret              = lookup(google.value, "client_secret", null)
@@ -181,7 +180,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       issuer = lookup(auth_settings.value, "issuer", null)
       dynamic "microsoft" {
         iterator = microsoft
-        for_each = can(auth_settings.value["microsoft"]) ? auth_settings.value["microsoft"][*] : []
+        for_each = try(auth_settings.value["microsoft"][*], [])
         content {
           client_id                  = microsoft.value.client_id
           client_secret              = lookup(microsoft.value, "client_secret", null)
@@ -194,7 +193,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       token_store_enabled           = lookup(auth_settings.value, "token_store_enabled", null)
       dynamic "twitter" {
         iterator = twitter
-        for_each = can(auth_settings.value["twitter"]) ? auth_settings.value["twitter"][*] : []
+        for_each = try(auth_settings.value["twitter"][*], [])
         content {
           consumer_key                 = twitter.value.consumer_key
           consumer_secret              = lookup(twitter.value, "consumer_secret", null)
@@ -207,7 +206,7 @@ resource "azurerm_windows_function_app_slot" "main" {
 
   dynamic "auth_settings_v2" {
     iterator = auth_settings_v2
-    for_each = can(var.auth_settings_v2[*]) ? var.auth_settings_v2[*] : []
+    for_each = try(var.auth_settings_v2[*], [])
     content {
       auth_enabled                            = lookup(auth_settings_v2.value, "auth_enabled", null)
       runtime_version                         = lookup(auth_settings_v2.value, "runtime_version", null)
@@ -222,7 +221,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       forward_proxy_custom_scheme_header_name = lookup(auth_settings_v2.value, "forward_proxy_custom_scheme_header_name", null)
       dynamic "apple_v2" {
         iterator = apple_v2
-        for_each = can(auth_settings_v2.value["apple_v2"]) ? auth_settings_v2.value["apple_v2"][*] : []
+        for_each = try(auth_settings_v2.value["apple_v2"][*], [])
         content {
           client_id                  = apple_v2.value.client_id
           client_secret_setting_name = lookup(apple_v2.value, "client_secret_setting_name", null)
@@ -231,7 +230,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "active_directory_v2" {
         iterator = active_directory_v2
-        for_each = can(auth_settings_v2.value["active_directory_v2"]) ? auth_settings_v2.value["active_directory_v2"][*] : []
+        for_each = try(auth_settings_v2.value["active_directory_v2"][*], [])
         content {
           client_id                       = active_directory_v2.client_id
           tenant_auth_endpoint            = lookup(active_directory_v2.value, "tenant_auth_endpoint", null)
@@ -248,14 +247,14 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "azure_static_web_app_v2" {
         iterator = azure_static_web_app_v2
-        for_each = can(auth_settings_v2.value["azure_static_web_app_v2"]) ? auth_settings_v2.value["azure_static_web_app_v2"][*] : []
+        for_each = try(auth_settings_v2.value["azure_static_web_app_v2"][*], [])
         content {
           client_id = azure_static_web_app_v2.value.client_id
         }
       }
       dynamic "custom_oidc_v2" {
         iterator = custom_oidc_v2
-        for_each = can(auth_settings_v2.value["custom_oidc_v2"]) ? auth_settings_v2.value["custom_oidc_v2"][*] : []
+        for_each = try(auth_settings_v2.value["custom_oidc_v2"][*], [])
         content {
           name                          = custom_oidc_v2.value.name
           client_id                     = custom_oidc_v2.value.client_id
@@ -272,7 +271,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "facebook_v2" {
         iterator = facebook_v2
-        for_each = can(auth_settings_v2.value["facebook_v2"]) ? auth_settings_v2.value["facebook_v2"][*] : []
+        for_each = try(auth_settings_v2.value["facebook_v2"][*], [])
         content {
           app_id                  = facebook_v2.value.app_id
           app_secret_setting_name = facebook_v2.value.app_secret_setting_name
@@ -282,7 +281,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "github_v2" {
         iterator = github_v2
-        for_each = can(auth_settings_v2.value["github_v2"]) ? auth_settings_v2.value["github_v2"][*] : []
+        for_each = try(auth_settings_v2.value["github_v2"][*], [])
         content {
           client_id                  = github_v2.value.client_id
           client_secret_setting_name = github_v2.value.client_secret_setting_name
@@ -291,7 +290,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "google_v2" {
         iterator = google_v2
-        for_each = can(auth_settings_v2.value["google_v2"]) ? auth_settings_v2.value["google_v2"][*] : []
+        for_each = try(auth_settings_v2.value["google_v2"][*], [])
         content {
           client_id                  = google_v2.value.client_id
           client_secret_setting_name = google_v2.value.client_secret_setting_name
@@ -301,7 +300,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "microsoft_v2" {
         iterator = microsoft_v2
-        for_each = can(auth_settings_v2.value["microsoft_v2"]) ? auth_settings_v2.value["microsoft_v2"][*] : []
+        for_each = try(auth_settings_v2.value["microsoft_v2"][*], [])
         content {
           client_id                  = microsoft_v2.value.client_id
           client_secret_setting_name = microsoft_v2.value.client_secret_setting_name
@@ -311,7 +310,7 @@ resource "azurerm_windows_function_app_slot" "main" {
       }
       dynamic "twitter_v2" {
         iterator = twitter_v2
-        for_each = can(auth_settings_v2.value["twitter_v2"]) ? auth_settings_v2.value["twitter_v2"][*] : []
+        for_each = try(auth_settings_v2.value["twitter_v2"][*], [])
         content {
           consumer_key                 = twitter_v2.value.consumer_key
           consumer_secret_setting_name = twitter_v2.value.consumer_secret_setting_name
@@ -333,9 +332,8 @@ resource "azurerm_windows_function_app_slot" "main" {
   }
 
   dynamic "backup" {
-    # for_each = var.backup
     iterator = backup
-    for_each = var.backup[*]
+    for_each = try(var.backup[*], [])
     content {
       name = backup.value.name
       schedule {
@@ -345,11 +343,6 @@ resource "azurerm_windows_function_app_slot" "main" {
         retention_period_days    = lookup(backup.value["schedule"], "retention_period_days", null)
         start_time               = lookup(backup.value["schedule"], "start_time", null)
         last_execution_time      = lookup(backup.value["schedule"], "last_execution_time", null)
-        # frequency_unit           = lookup(lookup(backup, "schedule", null), "frequency_unit", null)
-        # keep_at_least_one_backup = lookup(lookup(backup, "schedule", null), "keep_at_least_one_backup", null)
-        # retention_period_days    = lookup(lookup(backup, "schedule", null), "retention_period_days", null)
-        # start_time               = lookup(lookup(backup, "schedule", null), "start_time", null)
-        # last_execution_time      = lookup(lookup(backup, "schedule", null), "last_execution_time", null)
       }
       storage_account_url = backup.value.storage_account_url
       enabled             = backup.value.enabled
@@ -362,7 +355,7 @@ resource "azurerm_windows_function_app_slot" "main" {
   client_certificate_exclusion_paths = var.client_certificate_exclusion_paths
   dynamic "connection_string" {
     iterator = connection_string
-    for_each = can(var.connection_string) ? var.connection_string[*] : []
+    for_each = try(var.connection_string[*], [])
     content {
       name  = connection_string.value.name
       type  = connection_string.value.type
@@ -378,7 +371,7 @@ resource "azurerm_windows_function_app_slot" "main" {
   public_network_access_enabled            = var.public_network_access_enabled
   dynamic "identity" {
     iterator = identity
-    for_each = can(var.identity) ? var.identity[*] : []
+    for_each = try(var.identity[*], [])
     content {
       type         = identity.value.type
       identity_ids = lookup(identity.value, "identity_ids", null)
@@ -391,8 +384,7 @@ resource "azurerm_windows_function_app_slot" "main" {
 
   dynamic "storage_account" {
     iterator = storage_account
-    # for_each = can(var.storage_account) ? var.storage_account[*] : []
-    for_each = var.storage_account == null ? [] : var.storage_account[*]
+    for_each = try(var.storage_account[*], [])
     content {
       access_key   = storage_account.value.access_key
       account_name = storage_account.value.account_name
@@ -412,7 +404,7 @@ resource "azurerm_windows_function_app_slot" "main" {
   ## terraform that may allow for dynamic lifecycle blocks
 
   # dynamic "lifecycle" {
-  #   for_each = can(var.tf_lifecycle_ignore_changes) ? ["tf_lifecycle_ignore_changes"] : []
+  #   for_each = try(var.tf_lifecycle_ignore_changes[*], [])
   #   content {
   #     ignore_changes = var.tf_lifecycle_ignore_changes.ignore_changes
   #   }
@@ -439,7 +431,7 @@ resource "azurerm_linux_function_app_slot" "main" {
   function_app_id = var.function_app_id
   dynamic "site_config" {
     iterator = site_config
-    for_each = can(var.site_config[*]) ? var.site_config[*] : []
+    for_each = try(var.site_config[*], [])
     content {
       always_on             = lookup(site_config.value, "always_on", null)
       api_definition_url    = lookup(site_config.value, "api_definition_url", null)
@@ -448,7 +440,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       app_scale_limit       = lookup(site_config.value, "app_scale_limit", null)
       dynamic "app_service_logs" {
         iterator = app_service_logs
-        for_each = can(site_config.value["app_service_logs"][*]) ? site_config.value["app_service_logs"][*] : []
+        for_each = try(site_config.value["app_service_logs"][*], [])
         content {
           disk_quota_mb         = lookup(app_service_logs.value, "disk_quota_mb", null)
           retention_period_days = lookup(app_service_logs.value, "retention_period_days", null)
@@ -458,7 +450,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       application_insights_key               = lookup(site_config.value, "application_insights_key", null)
       dynamic "application_stack" {
         iterator = application_stack
-        for_each = can(site_config.value["application_stack"][*]) ? site_config.value["application_stack"][*] : []
+        for_each = try(site_config.value["application_stack"][*], [])
         content {
           dotnet_version          = lookup(application_stack.value, "dotnet_version", null)
           node_version            = lookup(application_stack.value, "node_version", null)
@@ -485,7 +477,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", null)
       dynamic "cors" {
         iterator = cors
-        for_each = can(site_config.value["cors"][*]) ? site_config.value["cors"][*] : []
+        for_each = try(site_config.value["cors"][*], [])
         content {
           allowed_origins     = lookup(cors.value, "allowed_origins", null)
           support_credentials = lookup(cors.value, "support_credentials", null)
@@ -499,7 +491,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       http2_enabled                     = lookup(site_config.value, "http2_enabled", null)
       dynamic "ip_restriction" {
         iterator = ip_restriction
-        for_each = can(site_config.value["ip_restriction"][*]) ? site_config.value["ip_restriction"][*] : []
+        for_each = try(site_config.value["ip_restriction"][*], [])
         content {
           action                    = lookup(ip_restriction.value, "action", null)
           ip_address                = lookup(ip_restriction.value, "ip_address", null)
@@ -509,7 +501,7 @@ resource "azurerm_linux_function_app_slot" "main" {
           virtual_network_subnet_id = lookup(ip_restriction.value, "virtual_network_subnet_id", null)
           dynamic "headers" {
             iterator = headers
-            for_each = can(ip_restriction.value["headers"][*]) ? ip_restriction.value["headers"][*] : []
+            for_each = try(ip_restriction.value["headers"][*], [])
             content {
               x_azure_fdid      = lookup(headers.value, "x_azure_fdid", null)
               x_fd_health_probe = lookup(headers.value, "x_fd_health_probe", null)
@@ -530,7 +522,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       runtime_scale_monitoring_enabled = lookup(site_config.value, "runtime_scale_monitoring_enabled", null)
       dynamic "scm_ip_restriction" {
         iterator = scm_ip_restriction
-        for_each = can(site_config.value["scm_ip_restriction"][*]) ? site_config.value["scm_ip_restriction"][*] : []
+        for_each = try(site_config.value["scm_ip_restriction"][*], [])
         content {
           action                    = lookup(scm_ip_restriction.value, "action", null)
           ip_address                = lookup(scm_ip_restriction.value, "ip_address", null)
@@ -540,7 +532,7 @@ resource "azurerm_linux_function_app_slot" "main" {
           virtual_network_subnet_id = lookup(scm_ip_restriction.value, "virtual_network_subnet_id", null)
           dynamic "headers" {
             iterator = headers
-            for_each = can(scm_ip_restriction.value["headers"][*]) ? scm_ip_restriction.value["headers"][*] : []
+            for_each = try(scm_ip_restriction.value["headers"][*], [])
             content {
               x_azure_fdid      = lookup(headers.value, "x_azure_fdid", null)
               x_fd_health_probe = lookup(headers.value, "x_fd_health_probe", null)
@@ -565,12 +557,12 @@ resource "azurerm_linux_function_app_slot" "main" {
   app_settings = var.app_settings
   dynamic "auth_settings" {
     iterator = auth_settings
-    for_each = can(var.auth_settings[*]) ? var.auth_settings[*] : []
+    for_each = try(var.auth_settings[*], [])
     content {
       enabled = lookup(auth_settings.value, "enabled", null)
       dynamic "active_directory" {
         iterator = active_directory
-        for_each = can(auth_settings.value["active_directory"]) ? auth_settings.value["active_directory"][*] : []
+        for_each = try(auth_settings.value["active_directory"][*], [])
         content {
           client_id                  = active_directory.value.client_id
           allowed_audiences          = lookup(active_directory.value, "allowed_audiences", null)
@@ -583,7 +575,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       default_provider               = lookup(auth_settings.value, "default_provider", null)
       dynamic "facebook" {
         iterator = facebook
-        for_each = can(auth_settings.value["facebook"]) ? auth_settings.value["facebook"][*] : []
+        for_each = try(auth_settings.value["facebook"][*], [])
         content {
           app_id                  = facebook.value.app_id
           app_secret              = lookup(facebook.value, "app_secret", null)
@@ -593,7 +585,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "github" {
         iterator = github
-        for_each = can(auth_settings.value["github"]) ? auth_settings.value["github"][*] : []
+        for_each = try(auth_settings.value["github"][*], [])
         content {
           client_id                  = github.value.client_id
           client_secret              = lookup(github.value, "client_secret", null)
@@ -603,7 +595,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "google" {
         iterator = google
-        for_each = can(auth_settings.value["google"]) ? auth_settings.value["google"][*] : []
+        for_each = try(auth_settings.value["google"][*], [])
         content {
           client_id                  = google.value.client_id
           client_secret              = lookup(google.value, "client_secret", null)
@@ -614,7 +606,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       issuer = lookup(auth_settings.value, "issuer", null)
       dynamic "microsoft" {
         iterator = microsoft
-        for_each = can(auth_settings.value["microsoft"]) ? auth_settings.value["microsoft"][*] : []
+        for_each = try(auth_settings.value["microsoft"][*], [])
         content {
           client_id                  = microsoft.value.client_id
           client_secret              = lookup(microsoft.value, "client_secret", null)
@@ -627,7 +619,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       token_store_enabled           = lookup(auth_settings.value, "token_store_enabled", null)
       dynamic "twitter" {
         iterator = twitter
-        for_each = can(auth_settings.value["twitter"]) ? auth_settings.value["twitter"][*] : []
+        for_each = try(auth_settings.value["twitter"][*], [])
         content {
           consumer_key                 = twitter.value.consumer_key
           consumer_secret              = lookup(twitter.value, "consumer_secret", null)
@@ -640,7 +632,7 @@ resource "azurerm_linux_function_app_slot" "main" {
 
   dynamic "auth_settings_v2" {
     iterator = auth_settings_v2
-    for_each = can(var.auth_settings_v2[*]) ? var.auth_settings_v2[*] : []
+    for_each = try(var.auth_settings_v2[*], [])
     content {
       auth_enabled                            = lookup(auth_settings_v2.value, "auth_enabled", null)
       runtime_version                         = lookup(auth_settings_v2.value, "runtime_version", null)
@@ -655,7 +647,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       forward_proxy_custom_scheme_header_name = lookup(auth_settings_v2.value, "forward_proxy_custom_scheme_header_name", null)
       dynamic "apple_v2" {
         iterator = apple_v2
-        for_each = can(auth_settings_v2.value["apple_v2"]) ? auth_settings_v2.value["apple_v2"][*] : []
+        for_each = try(auth_settings_v2.value["apple_v2"][*], [])
         content {
           client_id                  = apple_v2.value.client_id
           client_secret_setting_name = lookup(apple_v2.value, "client_secret_setting_name", null)
@@ -664,7 +656,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "active_directory_v2" {
         iterator = active_directory_v2
-        for_each = can(auth_settings_v2.value["active_directory_v2"]) ? auth_settings_v2.value["active_directory_v2"][*] : []
+        for_each = try(auth_settings_v2.value["active_directory_v2"][*], [])
         content {
           client_id                       = active_directory_v2.client_id
           tenant_auth_endpoint            = lookup(active_directory_v2.value, "tenant_auth_endpoint", null)
@@ -681,14 +673,14 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "azure_static_web_app_v2" {
         iterator = azure_static_web_app_v2
-        for_each = can(auth_settings_v2.value["azure_static_web_app_v2"]) ? auth_settings_v2.value["azure_static_web_app_v2"][*] : []
+        for_each = try(auth_settings_v2.value["azure_static_web_app_v2"][*], [])
         content {
           client_id = azure_static_web_app_v2.value.client_id
         }
       }
       dynamic "custom_oidc_v2" {
         iterator = custom_oidc_v2
-        for_each = can(auth_settings_v2.value["custom_oidc_v2"]) ? auth_settings_v2.value["custom_oidc_v2"][*] : []
+        for_each = try(auth_settings_v2.value["custom_oidc_v2"][*], [])
         content {
           name                          = custom_oidc_v2.value.name
           client_id                     = custom_oidc_v2.value.client_id
@@ -705,7 +697,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "facebook_v2" {
         iterator = facebook_v2
-        for_each = can(auth_settings_v2.value["facebook_v2"]) ? auth_settings_v2.value["facebook_v2"][*] : []
+        for_each = try(auth_settings_v2.value["facebook_v2"][*], [])
         content {
           app_id                  = facebook_v2.value.app_id
           app_secret_setting_name = facebook_v2.value.app_secret_setting_name
@@ -715,7 +707,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "github_v2" {
         iterator = github_v2
-        for_each = can(auth_settings_v2.value["github_v2"]) ? auth_settings_v2.value["github_v2"][*] : []
+        for_each = try(auth_settings_v2.value["github_v2"][*], [])
         content {
           client_id                  = github_v2.value.client_id
           client_secret_setting_name = github_v2.value.client_secret_setting_name
@@ -724,7 +716,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "google_v2" {
         iterator = google_v2
-        for_each = can(auth_settings_v2.value["google_v2"]) ? auth_settings_v2.value["google_v2"][*] : []
+        for_each = try(auth_settings_v2.value["google_v2"][*], [])
         content {
           client_id                  = google_v2.value.client_id
           client_secret_setting_name = google_v2.value.client_secret_setting_name
@@ -734,7 +726,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "microsoft_v2" {
         iterator = microsoft_v2
-        for_each = can(auth_settings_v2.value["microsoft_v2"]) ? auth_settings_v2.value["microsoft_v2"][*] : []
+        for_each = try(auth_settings_v2.value["microsoft_v2"][*], [])
         content {
           client_id                  = microsoft_v2.value.client_id
           client_secret_setting_name = microsoft_v2.value.client_secret_setting_name
@@ -744,7 +736,7 @@ resource "azurerm_linux_function_app_slot" "main" {
       }
       dynamic "twitter_v2" {
         iterator = twitter_v2
-        for_each = can(auth_settings_v2.value["twitter_v2"]) ? auth_settings_v2.value["twitter_v2"][*] : []
+        for_each = try(auth_settings_v2.value["twitter_v2"][*], [])
         content {
           consumer_key                 = twitter_v2.value.consumer_key
           consumer_secret_setting_name = twitter_v2.value.consumer_secret_setting_name
@@ -767,7 +759,7 @@ resource "azurerm_linux_function_app_slot" "main" {
 
   dynamic "backup" {
     iterator = backup
-    for_each = var.backup[*]
+    for_each = try(var.backup[*], [])
     content {
       name = backup.value.name
       schedule {
@@ -777,11 +769,6 @@ resource "azurerm_linux_function_app_slot" "main" {
         retention_period_days    = lookup(backup.value["schedule"], "retention_period_days", null)
         start_time               = lookup(backup.value["schedule"], "start_time", null)
         last_execution_time      = lookup(backup.value["schedule"], "last_execution_time", null)
-        # frequency_unit           = lookup(lookup(backup, "schedule", null), "frequency_unit", null)
-        # keep_at_least_one_backup = lookup(lookup(backup, "schedule", null), "keep_at_least_one_backup", null)
-        # retention_period_days    = lookup(lookup(backup, "schedule", null), "retention_period_days", null)
-        # start_time               = lookup(lookup(backup, "schedule", null), "start_time", null)
-        # last_execution_time      = lookup(lookup(backup, "schedule", null), "last_execution_time", null)
       }
       storage_account_url = backup.value.storage_account_url
       enabled             = backup.value.enabled
@@ -794,7 +781,7 @@ resource "azurerm_linux_function_app_slot" "main" {
   client_certificate_exclusion_paths = var.client_certificate_exclusion_paths
   dynamic "connection_string" {
     iterator = connection_string
-    for_each = can(var.connection_string) ? var.connection_string[*] : []
+    for_each = try(var.connection_string[*], [])
     content {
       name  = connection_string.value.name
       type  = connection_string.value.type
@@ -810,7 +797,7 @@ resource "azurerm_linux_function_app_slot" "main" {
   public_network_access_enabled            = var.public_network_access_enabled
   dynamic "identity" {
     iterator = identity
-    for_each = can(var.identity) ? var.identity[*] : []
+    for_each = try(var.identity[*], [])
     content {
       type         = identity.value.type
       identity_ids = lookup(identity.value, "identity_ids", null)
@@ -823,7 +810,7 @@ resource "azurerm_linux_function_app_slot" "main" {
 
   dynamic "storage_account" {
     iterator = storage_account
-    for_each = can(var.storage_account) ? var.storage_account[*] : []
+    for_each = try(var.storage_account[*], [])
     content {
       access_key   = storage_account.value.access_key
       account_name = storage_account.value.account_name
@@ -844,7 +831,7 @@ resource "azurerm_linux_function_app_slot" "main" {
   ## terraform that may allow for dynamic lifecycle blocks
 
   # dynamic "lifecycle" {
-  #   for_each = can(var.tf_lifecycle_ignore_changes) ? ["tf_lifecycle_ignore_changes"] : []
+  #   for_each = try(var.tf_lifecycle_ignore_changes[*], [])
   #   content {
   #     ignore_changes = var.tf_lifecycle_ignore_changes.ignore_changes
   #   }
