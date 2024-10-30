@@ -821,7 +821,7 @@ resource "azurerm_linux_function_app_slot" "main" {
     }
   }
 
-  storage_uses_managed_identity = var.storage_account_access_key == null ? true : null
+  storage_uses_managed_identity = var.storage_account_access_key == null ? var.storage_uses_managed_identity : null
   storage_key_vault_secret_id   = var.storage_key_vault_secret_id
   tags                          = merge(local.default_tags, var.tags)
 
