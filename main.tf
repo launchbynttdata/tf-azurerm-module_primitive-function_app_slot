@@ -379,7 +379,7 @@ resource "azurerm_windows_function_app_slot" "main" {
   }
   key_vault_reference_identity_id = var.key_vault_reference_identity_id
   service_plan_id                 = var.service_plan_id
-  storage_account_access_key      = var.storage_account_access_key
+  storage_account_access_key      = var.storage_account_access_key == null ? null : var.storage_account_access_key
   storage_account_name            = var.storage_account_name
 
   dynamic "storage_account" {
@@ -395,7 +395,7 @@ resource "azurerm_windows_function_app_slot" "main" {
     }
   }
 
-  storage_uses_managed_identity = var.storage_uses_managed_identity
+  storage_uses_managed_identity = var.storage_account_access_key == null ? var.storage_uses_managed_identity : null
   storage_key_vault_secret_id   = var.storage_key_vault_secret_id
   tags                          = merge(local.default_tags, var.tags)
 
@@ -805,7 +805,7 @@ resource "azurerm_linux_function_app_slot" "main" {
   }
   key_vault_reference_identity_id = var.key_vault_reference_identity_id
   service_plan_id                 = var.service_plan_id
-  storage_account_access_key      = var.storage_account_access_key
+  storage_account_access_key      = var.storage_account_access_key == null ? null : var.storage_account_access_key
   storage_account_name            = var.storage_account_name
 
   dynamic "storage_account" {
@@ -821,7 +821,7 @@ resource "azurerm_linux_function_app_slot" "main" {
     }
   }
 
-  storage_uses_managed_identity = var.storage_uses_managed_identity
+  storage_uses_managed_identity = var.storage_account_access_key == null ? var.storage_uses_managed_identity : null
   storage_key_vault_secret_id   = var.storage_key_vault_secret_id
   tags                          = merge(local.default_tags, var.tags)
 
