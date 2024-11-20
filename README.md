@@ -182,4 +182,10 @@ No modules.
 | <a name="output_linux_function_app_slot_possible_outbound_ip_address_list"></a> [linux\_function\_app\_slot\_possible\_outbound\_ip\_address\_list](#output\_linux\_function\_app\_slot\_possible\_outbound\_ip\_address\_list) | n/a |
 | <a name="output_linux_function_app_slot_kind"></a> [linux\_function\_app\_slot\_kind](#output\_linux\_function\_app\_slot\_kind) | n/a |
 | <a name="output_linux_function_app_slot_custom_domain_verification_id"></a> [linux\_function\_app\_slot\_custom\_domain\_verification\_id](#output\_linux\_function\_app\_slot\_custom\_domain\_verification\_id) | n/a |
+| <a name="output_function_app_slot_name"></a> [function\_app\_slot\_name](#output\_function\_app\_slot\_name) | The name of the Function App Slot. |
+| <a name="output_function_app_slot_id"></a> [function\_app\_slot\_id](#output\_function\_app\_slot\_id) | The ID of the Function App Slot. |
+| <a name="output_function_app_slot_default_hostname"></a> [function\_app\_slot\_default\_hostname](#output\_function\_app\_slot\_default\_hostname) | The default hostname of the Function App Slot. |
+| <a name="output_function_app_slot_possible_outbound_ip_address_list"></a> [function\_app\_slot\_possible\_outbound\_ip\_address\_list](#output\_function\_app\_slot\_possible\_outbound\_ip\_address\_list) | The possible outbound IP addresses of the Function App Slot. |
+| <a name="output_function_app_slot_kind"></a> [function\_app\_slot\_kind](#output\_function\_app\_slot\_kind) | The kind of the Function App Slot. |
+| <a name="output_function_app_slot_custom_domain_verification_id"></a> [function\_app\_slot\_custom\_domain\_verification\_id](#output\_function\_app\_slot\_custom\_domain\_verification\_id) | The custom domain verification ID of the Function App Slot. |
 <!-- END_TF_DOCS -->
