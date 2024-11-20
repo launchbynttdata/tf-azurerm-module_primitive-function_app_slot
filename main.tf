@@ -395,10 +395,11 @@ resource "azurerm_windows_function_app_slot" "main" {
     }
   }
 
-  storage_uses_managed_identity = var.storage_account_access_key == null ? var.storage_uses_managed_identity : null
-  storage_key_vault_secret_id   = var.storage_key_vault_secret_id
-  tags                          = merge(local.default_tags, var.tags)
-
+  storage_uses_managed_identity                  = var.storage_account_access_key == null ? var.storage_uses_managed_identity : null
+  storage_key_vault_secret_id                    = var.storage_key_vault_secret_id
+  tags                                           = merge(local.default_tags, var.tags)
+  virtual_network_subnet_id                      = var.virtual_network_subnet_id
+  webdeploy_publish_basic_authentication_enabled = var.webdeploy_publish_basic_authentication_enabled
   ## a lifecycle block is not able to be made dynamic due to the way terraform processes the lifecycle block.auth_settings
   ## see https://github.com/hashicorp/terraform/issues/24188 for discussion of the issue and any potential updates to
   ## terraform that may allow for dynamic lifecycle blocks
@@ -821,10 +822,10 @@ resource "azurerm_linux_function_app_slot" "main" {
     }
   }
 
-  storage_uses_managed_identity = var.storage_account_access_key == null ? var.storage_uses_managed_identity : null
-  storage_key_vault_secret_id   = var.storage_key_vault_secret_id
-  tags                          = merge(local.default_tags, var.tags)
-
+  storage_uses_managed_identity                  = var.storage_account_access_key == null ? var.storage_uses_managed_identity : null
+  storage_key_vault_secret_id                    = var.storage_key_vault_secret_id
+  tags                                           = merge(local.default_tags, var.tags)
+  virtual_network_subnet_id                      = var.virtual_network_subnet_id
   webdeploy_publish_basic_authentication_enabled = var.webdeploy_publish_basic_authentication_enabled
   ## a lifecycle block is not able to be made dynamic due to the way terraform processes the lifecycle block.auth_settings
   ## see https://github.com/hashicorp/terraform/issues/24188 for discussion of the issue and any potential updates to
