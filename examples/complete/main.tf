@@ -12,7 +12,7 @@
 
 module "resource_names" {
   source  = "terraform.registry.launch.nttdata.com/module_library/resource_name/launch"
-  version = "~> 1.0"
+  version = "~> 2.4"
 
   for_each = var.resource_names_map
 
@@ -27,7 +27,7 @@ module "resource_names" {
 
 module "resource_group" {
   source  = "terraform.registry.launch.nttdata.com/module_primitive/resource_group/azurerm"
-  version = "~> 1.0"
+  version = "~> 2.4"
 
   name     = local.resource_group_name
   location = var.location
@@ -37,7 +37,7 @@ module "resource_group" {
 
 module "storage_account" {
   source  = "terraform.registry.launch.nttdata.com/module_primitive/storage_account/azurerm"
-  version = "~> 1.0"
+  version = "~> 2.4"
 
   storage_account_name = local.storage_account_name
   resource_group_name  = module.resource_group.name
@@ -54,7 +54,7 @@ module "storage_account" {
 
 module "app_service_plan" {
   source  = "terraform.registry.launch.nttdata.com/module_primitive/app_service_plan/azurerm"
-  version = "~> 1.0"
+  version = "~> 2.4"
 
   name                = local.service_plan_name
   resource_group_name = module.resource_group.name
@@ -93,7 +93,7 @@ module "function_app" {
 
 module "role_assignment" {
   source  = "terraform.registry.launch.nttdata.com/module_primitive/role_assignment/azurerm"
-  version = "~> 1.0"
+  version = "~> 2.4"
 
   scope                = module.storage_account.id
   role_definition_name = "Storage Blob Data Contributor"
@@ -104,7 +104,7 @@ module "role_assignment" {
 
 module "function_app_slot" {
   # source  = "terraform.registry.launch.nttdata.com/module_primitive/function_app_slot/azurerm"
-  # version = "~> 1.0"
+  # version = "~> 2.4"
   source = "../.."
 
   function_app_id               = module.function_app.function_app_id
