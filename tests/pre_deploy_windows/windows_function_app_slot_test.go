@@ -28,7 +28,7 @@ func TestWindowsFunctionAppSlotPlan(t *testing.T) {
 		PlanFilePath: planFilePath,
 	}
 	// Run "terraform init" and "terraform plan" and fail the test if there are any errors.n
-	plan := terraform.InitAndPlanAndShowWithStruct(t, terraformOptions)
+	plan := terraform.InitAndPlanAndShowWithStructContext(t, t.Context(), terraformOptions)
 
 	// Validate the plan
 	terraform.RequirePlannedValuesMapKeyExists(t, plan, "module.resource_group.azurerm_resource_group.resource_group")

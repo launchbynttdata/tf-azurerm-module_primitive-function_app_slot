@@ -1,6 +1,7 @@
 package testimpl
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -17,7 +18,7 @@ func TestComposableFunctionApp(t *testing.T, ctx types.TestContext) {
 		t.Fatal("ARM_SUBSCRIPTION_ID environment variable is not set")
 	}
 
-	functionAppSlotHostname := terraform.Output(t, ctx.TerratestTerraformOptions(), "slot_default_hostname")
+	functionAppSlotHostname := terraform.OutputContext(t, context.Background(), ctx.TerratestTerraformOptions(), "slot_default_hostname")
 
 	res, err := http.Get(fmt.Sprintf("https://%s", functionAppSlotHostname))
 	if err != nil {
